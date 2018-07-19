@@ -1,7 +1,5 @@
 var map = {
   "resume-link": "resume",
-  "writings-link": "writings",
-  "papers-link": "paper-review",
   "email-link": "email",
   "facebook-link": "facebook",
   "linkedin-link": "linkedin",
