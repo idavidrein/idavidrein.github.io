@@ -5,19 +5,27 @@ html, body {
   height: 100%;
   margin: 0px;
   padding: 0px;
+
+  font-family: 'Open Sans', sans-serif;
+}
+
+.body {
+  background: linear-gradient(to bottom, rgba(231, 240, 245, 1) 0%, rgba(170, 221, 235, 1) 100%);
+}
+
+.name {
+  font-family: 'Roboto', sans-serif;
+  margin-bottom: 2px;
 }
 
 .wrapper {
-  background-color: lightpink;
-  
-  max-width: 50%;
+  max-width: 80%;
   display: flex;
   flex-direction: row;
-  height: 80%;
+  height: 60%;
 }
 
 .left, .right {
-  background-color: lightblue;
   
   margin: 5px;
   max-width: 50%;
@@ -30,6 +38,26 @@ html, body {
 .left {
   align-items: center;
   justify-content: center;
+}
+
+.links {
+  list-style: none;
+  padding-left: 0px;
+  font-size: 18px;
+}
+
+.links li {
+  display: inline-block;
+  margin-right: 8px;
+}
+
+.links a {
+  text-decoration: none;
+  padding: 4px;
+}
+
+.links a:hover {
+  background-color: rgba(0, 0, 0, 0.1);
 }
 
 .profile-picture {
