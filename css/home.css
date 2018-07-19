@@ -1,0 +1,88 @@
+html {
+  font-family: Lato, sans-serif;
+  font-weight: 300;
+  text-align: center;
+  margin-left: 30%;
+  margin-right: 30%; }
+
+::selection {
+  color: #BE1E2D;
+  background: none; }
+
+ul {
+  list-style-type: none; }
+
+a {
+  color: gray;
+  text-decoration: none;
+  font-weight: 500; }
+
+#hello-link {
+  display: inline;
+  color: #BE1E2D; }
+
+@-webkit-keyframes redGlow {
+  from {
+    opacity: 0.7; }
+  50% {
+    opacity: 1; }
+  to {
+    opacity: 0.7; } }
+#go {
+  -webkit-animation-name: redGlow;
+  -webkit-animation-duration: 2s;
+  -webkit-animation-iteration-count: infinite; }
+
+.hidden {
+  display: none; }
+
+.shown {
+  display: inline; }
+
+.selected {
+  font-weight: bold;
+  color: #BE1E2D; }
+
+.menu {
+  text-align: center;
+  margin: 0 0 0 -25pt;
+  padding: 0;
+  font-weight: 500; }
+  .menu li {
+    margin: 10px;
+    display: inline-block;
+    -webkit-animation-name: redGlow;
+    -webkit-animation-duration: 1s;
+    -webkit-animation-iteration-count: infinite; }
+
+#blurb {
+  display: inline;
+  color: gray; }
+
+.links img {
+  height: 20px;
+  width: 20px; }
+
+.title {
+  font-weight: 100;
+  font-size: 48pt;
+  text-transform: uppercase;
+  letter-spacing: 4px; }
+
+.heading {
+  padding-top: 200pt;
+  padding-bottom: 200pt; }
+
+.content {
+  margin: 0 auto;
+  letter-spacing: 1pt;
+  line-height: 150%; }
+
+#hello {
+  display: inline; }
+
+#main {
+  padding-top: 300px;
+  padding-bottom: 500px; }
+
+/*# sourceMappingURL=home.css.map */
