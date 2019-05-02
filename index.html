@@ -1,47 +1,39 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Personal webpage">
-    <meta name="author" content="David Rein">
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/style.css">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="Personal webpage">
+  <meta name="author" content="David Rein">
+  <title>David Rein</title>
+  <link rel="shortcut icon" href="media/favicon.png">
+</head>
+<body>
 
-    <title>David Rein</title>
+  <div class ="main_section">
+    
+    <div id="particles-js"></div>
+    <script type="text/javascript" src="js/particles.js"></script>
+    <script type="text/javascript" src="js/app.js"></script>
 
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/home.css">
-    <!-- Google fonts -->
-    <link href='https://fonts.googleapis.com/css?family=Lato:100,300,400|Karma:400,300' rel='stylesheet' type='text/css'>
-    <link rel="shortcut icon" href="media/favicon.png">
-  </head>
-
-  <body>
-    <div class="heading">
-      <div class="title">
-        David Rein
+    <div class="content">
+      <div class="topnav">
+        <a class="active" href="index.html">about</a>
+        <a href="media/resume.pdf" target="_blank">resume</a>
+        <a href="pages/projects.html">projects</a>
+        <a href="pages/contact.html">contact</a>
       </div>
-      <div class="menu">
-        <ul class="links">
-          <li><a class="link" id="email-link" href="mailto:irving.rein@duke.edu"><img src="icons/svg/email5.svg" alt="Email"></a></li>
-          <li><a class="link" id="facebook-link" href="https://www.facebook.com/idavidrein"><img src="icons/svg/facebook55.svg" alt="Facebook"></a></li>
-          <li><a class="link" id="linkedin-link" href="https://www.linkedin.com/in/idavidrein"><img src="icons/svg/linkedin24.svg" alt="LinkedIn"></a></li>
-          <li><a class="link" id="github-link" href="https://github.com/idavidrein"><img src="icons/svg/github7.svg" alt="Github"></a></li>
-          <li><a class="link" id="resume-link" href="media/Resume.pdf" target="_blank"><img src="icons/svg/file94.svg" alt="Resume"></a></li>
-        </ul>
-      </div>
-      <hr>
-
-
-      <div class="content">
-        <div id="hello"><img  style="width:10px;height:10px;" src="icons/svg/right11.svg" alt=""> <p id="hello-link">hello.</p></div>
-        <div id="blurb">duke '21, machine learning, movies, philosophy</div>
+      
+      <div class="text">
+        <h2>about</h2>
+        <p>undergrad, duke '21, interested in machine learning, philosophy, and having a positive impact on the world </p>
       </div>
     </div>
 
-    <!-- JQuery -->
-    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-    <!-- Custom JS scripts. -->
-    <script src="js/script.js"></script>
-  </body>
+  </div>
+  
+</body>
+
 </html>
