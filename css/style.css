@@ -70,6 +70,16 @@ body {
   color: white;
 }
 
+.projects {
+  margin:auto;
+  position: relative;
+  text-align: center;
+  left: 0;
+  top: 20%;
+  width: 62%;
+  color: white;
+}
+
 .thanks {
   margin:auto;
   position: relative;
@@ -87,4 +97,21 @@ img {
   color:white
   margin-left:15px;
   margin-right:15px;
+}
+
+.card {
+  background: #f2f2f2;
+  border-radius: 6px;
+  display: inline-block;
+  height: 300px;
+  margin: 1rem;
+  position: relative;
+  width: 300px;
+  box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
+  transition: top 0.3s;
+  top: 0;
+}
+
+.card:hover {
+  top: -10px;
 }
