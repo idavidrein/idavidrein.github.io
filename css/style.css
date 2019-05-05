@@ -51,7 +51,7 @@ body {
   float: left;
   color: #f2f2f2;
   text-align: center;
-  padding: 14px 16px;
+  padding: 20px 16px;
   text-decoration: none;
   font-size: 17px;
 }
@@ -68,7 +68,7 @@ body {
   margin:auto;
   position: relative;
   text-align: center;
-  top: 40%;
+  top: 35%;
   width: 50%;
   color: white;
 }
@@ -103,12 +103,6 @@ img {
 .card {
   background: #f2f2f2;
   border-radius: 6px;
-/*  min-height: min-content;
-  min-width: 300px;
-  max-width: max-content;
-  max-height: max-content;
-  width: 20%;
-  height: 20%;*/
   margin: 1rem;
   box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
   top: 0;
@@ -133,6 +127,6 @@ img {
   justify-content: center;
 }
 
-.no-underline {
-  text-decoration: none !important
+.no-underline a {
+  text-decoration: none
 }
