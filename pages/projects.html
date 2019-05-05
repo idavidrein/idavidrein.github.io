@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="stylesheet" href="../css/style.css">
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -13,7 +14,7 @@
 <body>
 
   <div class ="main_section">
-    
+
     <div id="particles-js"></div>
     <script type="text/javascript" src="../js/particles.js"></script>
     <script type="text/javascript" src="../js/app.js"></script>
@@ -29,13 +30,28 @@
       <div class="projects">
         <h2>projects</h2>
         <!-- change width of projects in style sheet to line up item columns -->
-        <div class="card">
-          <h3 style="color:black">Apache Spark and the NICU</h3>
-          <p style="color:#505050">I did this project!</p>
-        </div>
-        <div class="card">
-          <h3 style="color:black">Reinforcement Learning</h3>
-          <p style="color:#505050">I'm working on this project!</p>
+        <div class="container-fluid">
+          <div class="row">
+            <div class="card-deck">
+              <div class="card">
+                <a href="https://github.com/idavidrein/rl" target="_blank" class="no-underline">
+                  <div class="card-block">
+                    <h4 class="box-title">Reinforcement Learning</h4>
+                    <p style="color:#505050">Coming soon</p>
+                  </div>
+                </a>
+              </div>
+              <div class="card">
+                <a href="../media/executive-slides.pdf" target="_blank" class="no-underline">
+
+                  <div class="card-block">
+                    <h4 class="box-title">Improving the Machine Learning Pipeline at Duke: Apache Spark and the NICU</h4>
+                    <p style="color:#505050">NLP Benchmarks, Apache Spark, Electronic Medical Records, NICU</p>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

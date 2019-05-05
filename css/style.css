@@ -2,7 +2,7 @@ html {
   font-family: Arial, Helvetica, sans-serif;
   background-color: white;
   margin: 0;
-  height: 100%
+  height: 100vh
   top: 0;
   bottom: 0;
   left: 0;
@@ -28,7 +28,7 @@ body {
 }
 
 #particles-js {
-  background-image: linear-gradient(90deg, rgba(5,0,96,1) 0%, rgba(2,0,139,1) 100%);
+  background-image: linear-gradient(90deg, rgba(5,0,96,1), rgba(2,0,139,1));
   left:0;
   top:0;
   width:100%;
@@ -41,6 +41,10 @@ body {
   position: relative;
   z-index: 2;
   height: 100vh
+}
+
+.topnav {
+  overflow: auto
 }
 
 .topnav a {
@@ -64,7 +68,6 @@ body {
   margin:auto;
   position: relative;
   text-align: center;
-  left: 0;
   top: 40%;
   width: 50%;
   color: white;
@@ -74,19 +77,17 @@ body {
   margin:auto;
   position: relative;
   text-align: center;
-  left: 0;
+  /*left: 0;*/
   top: 20%;
-  width: 62%;
+  width: 50%;
   color: white;
 }
 
 .thanks {
-  margin:auto;
-  position: relative;
-  text-align: right;
-  left: 0;
-  top: 85%;
-  width: 97%;
+  position: fixed;
+  margin: 10px;
+  bottom: 0;
+  right: 0;
   color: white;
   font-size: 80%
 }
@@ -101,17 +102,37 @@ img {
 
 .card {
   background: #f2f2f2;
-  position: relative;
   border-radius: 6px;
-  display: inline-block;
-  height: 300px;
+/*  min-height: min-content;
+  min-width: 300px;
+  max-width: max-content;
+  max-height: max-content;
+  width: 20%;
+  height: 20%;*/
   margin: 1rem;
-  width: 300px;
   box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
   top: 0;
-  transition: top 0.3s;
+  transition: all 0.3s;
 }
 
 .card:hover {
   top: -10px;
+}
+
+.box-title {
+  color:black; 
+  margin:10px
+}
+
+.container-fluid { 
+  max-width: 1200px; 
+}
+
+[class*="row"] {
+  margin-bottom: 1em;
+  justify-content: center;
+}
+
+.no-underline {
+  text-decoration: none !important
 }
