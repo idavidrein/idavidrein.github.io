@@ -28,7 +28,7 @@ body {
 }
 
 #particles-js {
-  background-image: linear-gradient(90deg, rgba(5,0,96,1), rgba(2,0,139,1));
+  background-image: linear-gradient(270deg, #009FFF, #ec2F4B);
   left:0;
   top:0;
   width:100%;
@@ -61,7 +61,7 @@ body {
 }
 
 .topnav a.active {
-  color: #c77300;
+  color: #a69dec;
 }
 
 .text {
