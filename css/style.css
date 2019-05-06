@@ -107,6 +107,7 @@ img {
   box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
   top: 0;
   transition: all 0.3s;
+  min-width: 300px;
 }
 
 .card:hover {
@@ -119,7 +120,7 @@ img {
 }
 
 .container-fluid { 
-  max-width: 1200px; 
+  max-width: 1200px;
 }
 
 [class*="row"] {
