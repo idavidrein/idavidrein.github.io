@@ -73,6 +73,10 @@ body {
   color: white;
 }
 
+.text a {
+  margin: 10px;
+}
+
 .projects {
   margin:auto;
   position: relative;
