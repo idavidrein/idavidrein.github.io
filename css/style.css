@@ -78,13 +78,12 @@ body {
 }
 
 .projects {
-  margin:auto;
-  position: relative;
+  padding: 1em;
   text-align: center;
-  /*left: 0;*/
-  top: 20%;
-  width: 50%;
+  left: 0;
   color: white;
+  height: 100vh;
+  overflow-y: auto;
 }
 
 .thanks {
@@ -96,7 +95,7 @@ body {
   font-size: 80%
 }
 
-img {
+.icon {
   filter:invert(1);
   width:25px; 
   color:white
@@ -106,16 +105,36 @@ img {
 
 .card {
   background: #f2f2f2;
-  border-radius: 6px;
+  border-radius: 8px;
   margin: 1rem;
-  box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
-  top: 0;
-  transition: all 0.3s;
-  min-width: 300px;
+  /*box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);*/
+  box-shadow: 2px 10px 15px rgba(0,0,0,.3);
+  min-width: 215px;
+  transition: all 0.2s;
+  padding: 1rem;
+  transform: translateZ(0);
 }
 
 .card:hover {
-  top: -10px;
+  transform: scale(1.03);
+  -webkit-transform:scale(1.03);
+  -moz-transform:scale(1.03);
+}
+
+.container {
+  padding: 1rem;
+}
+
+@media (min-width: 576px) {
+    .card-columns {
+        column-count: 2;
+    }
+}
+
+@media (min-width: 800px) {
+  .card-columns {
+    column-count: 3;
+  }
 }
 
 .box-title {
@@ -123,15 +142,10 @@ img {
   margin:10px
 }
 
-.container-fluid { 
-  max-width: 1200px;
-}
-
-[class*="row"] {
-  margin-bottom: 1em;
-  justify-content: center;
-}
-
 .no-underline a {
   text-decoration: none
+}
+
+.projects::-webkit-scrollbar { 
+    display: none;
 }
