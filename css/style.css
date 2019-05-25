@@ -78,12 +78,13 @@ body {
 }
 
 .projects {
-  padding: 1em;
-  text-align: center;
-  left: 0;
-  color: white;
-  height: 100vh;
-  overflow-y: auto;
+ padding: 1em;
+ text-align: center;
+ left: 0;
+ color: white;
+ height: 90vh;
+ height: calc(100vh - 65px);
+ overflow-y: auto;
 }
 
 .thanks {
