@@ -134,11 +134,11 @@ body {
   transform: translateZ(0);
 }
 
-.card:hover {
+/*.card:hover {
   transform: scale(1.03);
   -webkit-transform:scale(1.03);
   -moz-transform:scale(1.03);
-}
+}*/
 
 .container {
   padding: 1rem;
