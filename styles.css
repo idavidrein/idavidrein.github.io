@@ -44,12 +44,60 @@ a:hover {
     border-bottom: 1px solid var(--line);
 }
 
-.profile-photo {
+.profile-photo-button {
+    display: block;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: zoom-in;
     width: 100%;
+    max-width: 220px;
+    border-radius: 14px;
+}
+
+.profile-photo-button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+}
+
+.profile-photo {
+    display: block;
+    width: 100%;
+    height: auto;
     max-width: 220px;
     aspect-ratio: 1 / 1;
     border-radius: 14px;
     object-fit: cover;
+}
+
+.lightbox {
+    border: 0;
+    padding: 0;
+    background: transparent;
+    max-width: none;
+    max-height: none;
+}
+
+.lightbox[open] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    height: 100vh;
+    inset: 0;
+    margin: 0;
+}
+
+.lightbox::backdrop {
+    background: rgba(0, 0, 0, 0.85);
+}
+
+.lightbox img {
+    display: block;
+    max-width: min(92vw, 900px);
+    max-height: 92vh;
+    border-radius: 12px;
+    cursor: zoom-out;
 }
 
 .hero-text {

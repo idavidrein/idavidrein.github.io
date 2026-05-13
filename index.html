@@ -15,7 +15,9 @@
     <div class="page">
         <header class="hero">
             <div class="hero-image">
-                <img src="files/profile_259x345.webp" alt="David Rein" class="profile-photo">
+                <button type="button" class="profile-photo-button" id="profile-photo-button" aria-label="View larger photo">
+                    <img src="files/profile.webp" alt="David Rein" class="profile-photo" width="660" height="660">
+                </button>
             </div>
             <div class="hero-text">
                 <h1>David Rein</h1>
@@ -159,5 +161,35 @@
             </section>
         </main>
     </div>
+
+    <dialog id="profile-lightbox" class="lightbox" aria-label="Profile photo">
+        <img alt="David Rein" data-full-src="files/profile_full.webp">
+    </dialog>
+
+    <script>
+        (function () {
+            var button = document.getElementById('profile-photo-button');
+            var dialog = document.getElementById('profile-lightbox');
+            if (!button || !dialog) return;
+            var img = dialog.querySelector('img');
+            var loaded = false;
+
+            button.addEventListener('click', function () {
+                if (!loaded) {
+                    img.src = img.dataset.fullSrc;
+                    loaded = true;
+                }
+                if (typeof dialog.showModal === 'function') {
+                    dialog.showModal();
+                } else {
+                    dialog.setAttribute('open', '');
+                }
+            });
+
+            dialog.addEventListener('click', function (e) {
+                if (e.target === dialog || e.target === img) dialog.close();
+            });
+        })();
+    </script>
 </body>
 </html>
