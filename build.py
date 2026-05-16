@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """Build blog posts from Markdown to HTML."""
 
+import html
 import re
 import sys
 import textwrap
-from datetime import datetime
+from datetime import date, datetime
 from pathlib import Path
 
 try:
@@ -19,6 +20,25 @@ CONTENT_DIR = Path("content/posts")
 OUTPUT_DIR = Path("posts")
 FONT_PATH = Path("files/fonts/EBGaramond.ttf")
 OG_DIR = OUTPUT_DIR / "og"
+
+WRITING_FILE = Path("content/writing.yaml")
+WRITING_PAGE = Path("writing.html")
+INDEX_FILE = Path("index.html")
+HOMEPAGE_FEATURED_LIMIT = 5
+
+# Order + display labels for the type filter chips on /writing.html.
+TYPE_LABELS = {
+    "essay": "Essay",
+    "external": "External",
+    "talk": "Talk",
+    "podcast": "Podcast",
+}
+CHIP_LABELS = {
+    "essay": "Essays",
+    "external": "External",
+    "talk": "Talks",
+    "podcast": "Podcasts",
+}
 
 TEMPLATE = """\
 <!DOCTYPE html>
@@ -60,6 +80,51 @@ TEMPLATE = """\
         </article>
     </div>
     <script src="../footnotes.js"></script>
+</body>
+</html>
+"""
+
+WRITING_TEMPLATE = """\
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Writing &amp; talks - David Rein</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="apple-touch-icon" sizes="180x180" href="files/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="files/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="files/favicon/favicon-16x16.png">
+    <link rel="manifest" href="files/favicon/site.webmanifest">
+    <meta name="description" content="Essays, external writing, talks, and podcast appearances by David Rein.">
+</head>
+<body>
+    <div class="page">
+        <nav class="post-nav">
+            <a href="/">&larr; Home</a>
+        </nav>
+
+        <header class="post-header">
+            <h1>Writing &amp; talks</h1>
+            <p class="post-date">Essays, external writing, talks, and podcast appearances.</p>
+        </header>
+
+        <div class="writing-controls">
+            <input type="search" id="writing-search" class="writing-search" placeholder="Search by title, topic, or tag…" aria-label="Search writing and talks" autocomplete="off">
+            <div class="filter-chips" id="filter-chips" role="group" aria-label="Filter by type">
+{chips}
+            </div>
+        </div>
+
+        <p class="writing-count" id="writing-count" aria-live="polite"></p>
+
+        <ul class="writing-list" id="writing-list">
+{items}
+        </ul>
+
+        <p class="writing-empty" id="writing-empty" hidden>No matching items. <button type="button" class="link-button" id="clear-filters">Clear filters</button></p>
+    </div>
+    <script src="writing.js"></script>
 </body>
 </html>
 """
@@ -225,6 +290,175 @@ def build_post(md_path):
     print(f"  {md_path} -> {out_path}")
 
 
+def _entry_date(raw):
+    """Return (display_year, sort_key) for a writing.yaml date.
+
+    Accepts a full date (YYYY-MM-DD) or a bare year. Only the year is
+    ever displayed; the full date, when present, refines sort order
+    within a year.
+    """
+    if isinstance(raw, datetime):
+        raw = raw.date()
+    if isinstance(raw, date):
+        return raw.year, (raw.year, raw.month, raw.day)
+    if isinstance(raw, int):
+        return raw, (raw, 0, 0)
+    if isinstance(raw, str):
+        parts = raw.strip().split("-")
+        year = int(parts[0])
+        month = int(parts[1]) if len(parts) > 1 else 0
+        day = int(parts[2]) if len(parts) > 2 else 0
+        return year, (year, month, day)
+    raise ValueError(f"Unrecognized date: {raw!r}")
+
+
+def load_writing():
+    """Load and validate writing.yaml, newest first."""
+    if not WRITING_FILE.exists():
+        return []
+    raw = yaml.safe_load(WRITING_FILE.read_text()) or []
+    entries = []
+    for item in raw:
+        for field in ("title", "url", "date", "type", "description"):
+            if field not in item:
+                raise ValueError(f"writing.yaml entry missing '{field}': {item}")
+        if item["type"] not in TYPE_LABELS:
+            raise ValueError(
+                f"writing.yaml unknown type {item['type']!r} "
+                f"(expected one of {', '.join(TYPE_LABELS)})"
+            )
+        year, sort_key = _entry_date(item["date"])
+        entries.append(
+            {
+                "title": str(item["title"]).strip(),
+                "url": str(item["url"]).strip(),
+                "type": item["type"],
+                "tags": [str(t).strip() for t in item.get("tags", [])],
+                "description": str(item["description"]).strip(),
+                "featured": bool(item.get("featured", False)),
+                "year": year,
+                "sort_key": sort_key,
+            }
+        )
+    entries.sort(key=lambda e: e["sort_key"], reverse=True)
+    return entries
+
+
+def _link_attrs(url):
+    """External links open in a new tab; internal ones stay in-tab."""
+    if url.startswith("/") or url.startswith("#"):
+        return ""
+    return ' target="_blank" rel="noreferrer"'
+
+
+def _esc_text(value):
+    """Escape for HTML text content (keep quotes/apostrophes literal)."""
+    return html.escape(str(value), quote=False)
+
+
+def _esc_attr(value):
+    """Escape for an HTML attribute value."""
+    return html.escape(str(value), quote=True)
+
+
+def render_homepage_li(entry, indent):
+    """Compact list item for the curated homepage list."""
+    pad = " " * indent
+    href = _esc_attr(entry["url"])
+    attrs = _link_attrs(entry["url"])
+    return (
+        f'{pad}<li>\n'
+        f'{pad}    <div class="writing-row">\n'
+        f'{pad}        <span class="writing-year">{entry["year"]}</span>\n'
+        f'{pad}        <a href="{href}"{attrs}>\n'
+        f'{pad}            {_esc_text(entry["title"])}\n'
+        f'{pad}        </a>\n'
+        f'{pad}    </div>\n'
+        f'{pad}    <p>{_esc_text(entry["description"])}</p>\n'
+        f'{pad}</li>'
+    )
+
+
+def render_page_li(entry):
+    """Full list item for /writing.html, with filter metadata."""
+    href = _esc_attr(entry["url"])
+    attrs = _link_attrs(entry["url"])
+    type_label = TYPE_LABELS[entry["type"]]
+    haystack = " ".join(
+        [
+            entry["title"],
+            entry["description"],
+            " ".join(entry["tags"]),
+            type_label,
+            str(entry["year"]),
+        ]
+    ).lower()
+    tag_buttons = "".join(
+        f'<button type="button" class="tag" data-tag="{_esc_attr(t)}">'
+        f"{_esc_text(t)}</button>"
+        for t in entry["tags"]
+    )
+    return (
+        f'            <li class="writing-item" data-type="{entry["type"]}" '
+        f'data-tags="{_esc_attr(" ".join(entry["tags"]))}" '
+        f'data-text="{_esc_attr(haystack)}">\n'
+        f'                <div class="writing-row">\n'
+        f'                    <span class="writing-year">{entry["year"]}</span>\n'
+        f'                    <a href="{href}"{attrs}>{_esc_text(entry["title"])}</a>\n'
+        f'                </div>\n'
+        f'                <p>{_esc_text(entry["description"])}</p>\n'
+        f'                <div class="entry-meta">\n'
+        f'                    <span class="entry-type entry-type-{entry["type"]}">'
+        f"{type_label}</span>"
+        f"{tag_buttons}\n"
+        f'                </div>\n'
+        f"            </li>"
+    )
+
+
+def build_writing_page(entries):
+    """Write the searchable /writing.html archive."""
+    present = [t for t in TYPE_LABELS if any(e["type"] == t for e in entries)]
+    chips = ['                <button type="button" class="chip" '
+             'data-type="all" aria-pressed="true">All</button>']
+    for t in present:
+        chips.append(
+            f'                <button type="button" class="chip" '
+            f'data-type="{t}" aria-pressed="false">{CHIP_LABELS[t]}</button>'
+        )
+    items = "\n".join(render_page_li(e) for e in entries)
+    WRITING_PAGE.write_text(
+        WRITING_TEMPLATE.format(chips="\n".join(chips), items=items)
+    )
+    print(f"  {WRITING_FILE} -> {WRITING_PAGE} ({len(entries)} entries)")
+
+
+def inject_homepage_list(entries):
+    """Replace the marked block in index.html with the curated list."""
+    if not INDEX_FILE.exists():
+        return
+    text = INDEX_FILE.read_text()
+    marker = re.compile(
+        r"(<!-- WRITING:START -->).*?(<!-- WRITING:END -->)", re.DOTALL
+    )
+    if not marker.search(text):
+        print(
+            "  WARNING: WRITING:START/END markers not found in index.html; "
+            "skipping homepage injection."
+        )
+        return
+    featured = [e for e in entries if e["featured"]][:HOMEPAGE_FEATURED_LIMIT]
+    if not featured:
+        featured = entries[:HOMEPAGE_FEATURED_LIMIT]
+    block = "\n".join(render_homepage_li(e, 20) for e in featured)
+
+    def _replace(m):
+        return f'{m.group(1)}\n{block}\n' + " " * 20 + m.group(2)
+
+    INDEX_FILE.write_text(marker.sub(_replace, text))
+    print(f"  {WRITING_FILE} -> {INDEX_FILE} ({len(featured)} featured)")
+
+
 def main():
     if not CONTENT_DIR.exists():
         print(f"No content directory at {CONTENT_DIR}")
@@ -238,6 +472,12 @@ def main():
     print(f"Building {len(posts)} post(s)...")
     for p in posts:
         build_post(p)
+
+    entries = load_writing()
+    if entries:
+        print(f"Building writing index ({len(entries)} entries)...")
+        build_writing_page(entries)
+        inject_homepage_list(entries)
     print("Done.")
 
 

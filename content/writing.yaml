@@ -1,0 +1,108 @@
+# Single source of truth for the "writing & talks" list.
+#
+# build.py reads this to generate /writing.html (searchable, filterable)
+# and to inject the curated list on the homepage (between the
+# WRITING:START / WRITING:END markers in index.html).
+#
+# Fields per entry:
+#   title        required
+#   url          required. Internal links start with "/" (open in-tab);
+#                anything else is treated as external (opens in a new tab).
+#   date         required. Either YYYY-MM-DD or just YYYY when the exact
+#                day is unknown. Only the year is ever displayed; the full
+#                date (when given) is used for sorting within a year.
+#   type         required. One of: essay | external | talk | podcast
+#                  essay    = a post hosted here under /posts/
+#                  external = writing published elsewhere (METR, Epoch, ...)
+#                  talk     = a recorded talk / presentation
+#                  podcast  = a podcast / interview appearance
+#   tags         optional list of short lowercase tags (used by search +
+#                the clickable tag filters on /writing.html)
+#   description  required. One sentence, shown under the title.
+#   featured     optional bool. Featured entries make up the curated list
+#                on the homepage (most recent first, capped at 5).
+#
+# Order here does not matter; the build sorts by date, newest first.
+
+- title: "MLST: AI Timelines & METR Time Horizons (with Beth Barnes)"
+  url: https://www.youtube.com/watch?v=zSAGzfspuDE
+  date: 2026-05-04
+  type: podcast
+  tags: [metr, time-horizons, evals]
+  description: A conversation with Beth Barnes about how the headline METR time-horizons chart is widely misread, and what it does and doesn't say about AI timelines.
+  featured: true
+
+- title: AI Companies as 'Hot Springs' for Growing AIs
+  url: /posts/hot-springs.html
+  date: 2026-04-18
+  type: essay
+  tags: [ai-safety, loss-of-control]
+  description: The "rogue AI escapes containment" framing misses that AI labs are actually the most attractive place for a misaligned AI to stay.
+  featured: true
+
+- title: The Compute Bottleneck Intuition Is Formed Under Unusual Conditions
+  url: /posts/compute-bottleneck.html
+  date: 2026-04-13
+  type: essay
+  tags: [ai-safety, takeoff]
+  description: AI researchers are biased against fast takeoff scenarios because our intelligence is largely fixed.
+  featured: true
+
+- title: Red-Teaming Anthropic's Internal Agent Monitoring Systems
+  url: https://metr.org/blog/2026-03-25-red-teaming-anthropic-agent-monitoring/
+  date: 2026-03-25
+  type: external
+  tags: [metr, monitoring, red-teaming]
+  description: I conducted a three-week adversarial evaluation of Anthropic's internal agent monitoring systems, discovering several vulnerabilities.
+  featured: true
+
+- title: "MirrorCode: Evidence that AI can already do some weeks-long coding tasks"
+  url: https://epoch.ai/blog/mirrorcode-preliminary-results
+  date: 2026
+  type: external
+  tags: [epoch, evals, coding]
+  description: Recent AI models can autonomously reimplement complex software programs by reverse-engineering their behavior, with Claude Opus 4.6 successfully reimplementing a 16,000-line bioinformatics toolkit.
+  featured: true
+
+- title: "AXRP Podcast: David Rein on METR Time Horizons"
+  url: https://axrp.net/episode/2026/01/03/episode-47-david-rein-metr-time-horizons.html
+  date: 2026-01-03
+  type: podcast
+  tags: [metr, time-horizons, evals]
+  description: A conversation about some of the subtle in-the-weeds details about METR's time horizon methodology.
+  featured: true
+
+- title: "Research Update: Algorithmic vs. Holistic Evaluation"
+  url: https://metr.org/blog/2025-08-12-research-update-towards-reconciling-slowdown-with-time-horizons/
+  date: 2025-08-12
+  type: external
+  tags: [metr, evals, time-horizons]
+  description: A comparison of automatic scoring vs. human rubric reviews on real repos.
+
+- title: Science Comms at METR
+  url: https://metr.org/blog/2025-08-11-science-comms-at-metr/
+  date: 2025-08-11
+  type: external
+  tags: [metr, science-comms]
+  description: Some notes on how we communicate nuanced results at METR while preserving clarity.
+
+- title: NYU Code Debates Update/Postmortem
+  url: https://www.lesswrong.com/posts/wsXCXoyvRi3DnWZ2M/nyu-code-debates-update-postmortem
+  date: 2024
+  type: external
+  tags: [debate, scalable-oversight]
+  description: A write-up of what we learned from running AI-assisted debates with non-programmer judges on simple coding tasks.
+
+- title: CoLM GPQA Spotlight Talk
+  url: https://www.youtube.com/watch?v=ZANbujPTvOY
+  date: 2024
+  type: talk
+  tags: [gpqa, benchmarks]
+  description: Spotlight presentation for GPQA at the first Conference on Language Modeling.
+
+- title: Can Good Benchmarks Contain Mistakes?
+  url: https://wp.nyu.edu/arg/can-good-benchmarks-contain-mistakes/
+  date: 2024
+  type: external
+  tags: [benchmarks, gpqa]
+  description: Why benchmarks can still be useful even when they aren't perfect, and how I think about their limits.
