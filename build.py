@@ -60,6 +60,7 @@ TEMPLATE = """\
         </article>
     </div>
     <script src="../footnotes.js"></script>
+    <script src="../lightbox.js"></script>
 </body>
 </html>
 """

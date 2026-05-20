@@ -94,8 +94,11 @@ a:hover {
 
 .lightbox img {
     display: block;
-    max-width: min(92vw, 900px);
-    max-height: 92vh;
+    max-width: 95vw;
+    max-height: 95vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
     border-radius: 12px;
     cursor: zoom-out;
 }
@@ -237,6 +240,38 @@ it {
 
 .post-body p:last-child {
     margin-bottom: 0;
+}
+
+.post-body ol,
+.post-body ul {
+    margin: 0 0 20px;
+    padding-left: 32px;
+}
+
+.post-body li {
+    margin-bottom: 6px;
+    font-size: 1.05rem;
+}
+
+.post-body img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 28px auto;
+}
+
+.post-body figure {
+    margin: 28px 0;
+}
+
+.post-body figure img {
+    margin: 0 auto 8px;
+}
+
+.post-body figcaption {
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--muted);
 }
 
 /* Popup footnotes */

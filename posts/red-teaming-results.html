@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What I Found Stress-Testing Anthropic's Internal Agent Monitoring - David Rein</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="apple-touch-icon" sizes="180x180" href="../files/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../files/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../files/favicon/favicon-16x16.png">
+    <link rel="manifest" href="../files/favicon/site.webmanifest">
+    <meta name="description" content="Results from a month embedded at Anthropic red-teaming the systems that monitor internally deployed agents for misaligned behavior.">
+    <meta property="og:title" content="What I Found Stress-Testing Anthropic's Internal Agent Monitoring">
+    <meta property="og:description" content="Results from a month embedded at Anthropic red-teaming the systems that monitor internally deployed agents for misaligned behavior.">
+    <meta property="og:image" content="https://idavidrein.com/posts/og/red-teaming-results.png">
+    <meta property="og:type" content="article">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="What I Found Stress-Testing Anthropic's Internal Agent Monitoring">
+    <meta name="twitter:description" content="Results from a month embedded at Anthropic red-teaming the systems that monitor internally deployed agents for misaligned behavior.">
+    <meta name="twitter:image" content="https://idavidrein.com/posts/og/red-teaming-results.png">
+</head>
+<body>
+    <div class="page">
+        <nav class="post-nav">
+            <a href="/">&larr; Home</a>
+        </nav>
+
+        <article class="post">
+            <header class="post-header">
+                <h1>What I Found Stress-Testing Anthropic's Internal Agent Monitoring</h1>
+                <time class="post-date" datetime="2026-05-19">May 19, 2026</time>
+            </header>
+
+            <div class="post-body">
+                <p>AI labs have started developing systems to monitor internally deployed AI agents for misaligned behavior. Earlier this year, I spent a month embedded at Anthropic stress-testing these systems, to see how easily current and future AIs could &ldquo;go rogue&rdquo; inside the company. We <a target="_blank" rel="noreferrer" href="https://metr.org/blog/2026-03-25-red-teaming-anthropic-agent-monitoring/">announced the exercise in March</a>; today we&rsquo;re publishing the results and takeaways in more detail as part of <a target="_blank" rel="noreferrer" href="https://metr.org/blog/2026-05-19-frontier-risk-report/#anthropic">METR&rsquo;s Frontier Risk Report</a> (Appendix B). The exercise itself was conducted independently from the report.</p>
+<p>The key results:</p>
+<ol>
+<li>I found several routes to disable or avoid monitoring (infrastructure vulnerabilities, coverage gaps, jailbreaks).</li>
+<li>Agents were often in a position to easily set up unrestricted, unmonitored compute.</li>
+<li>But agents are currently terrible at avoiding being caught.</li>
+</ol>
+<p>I had &ldquo;need-to-know&rdquo; level access to Anthropic&rsquo;s monitoring and security systems, internal agent trajectories, and Mythos. As far as I know this is the most access an independent, third-party researcher has gotten to a frontier lab&rsquo;s internal systems.</p>
+<h2>Vulnerabilities</h2>
+<p>Some of the exploits and vulnerabilities I found:</p>
+<ol>
+<li>An environment variable that could cause traffic to register as not coming from Claude Code.</li>
+<li>A recently introduced bug meant that subagent calls weren&rsquo;t monitored.</li>
+<li>Basic jailbreaks very reliably fooled the monitors.</li>
+</ol>
+<p>My rough guess is there are something like 5–20 basic vulnerabilities of this kind in the system right now, though many require specific knowledge of internal infrastructure to find, and would be difficult for an agent to discover and exploit without getting caught.</p>
+<p>Better AIs will find and patch these vulnerabilities more easily. But we&rsquo;ll also defer to them more, and they&rsquo;ll write more complex code—increasing the surface area for vulnerabilities. How these factors trade off as AI improves will likely be a major input to risk.</p>
+<p><img alt="Two scenarios: in one, AI catches vulnerabilities faster than complexity introduces them, so net vulnerabilities fall; in the other, complexity outpaces AI's ability to catch vulnerabilities, so net vulnerabilities rise." src="../files/posts/red-teaming-results/vulns-over-time.png" /></p>
+<h2>What an agent could get away with</h2>
+<p>If an agent subverted monitoring, what could it get away with? Based on the information I reviewed about Anthropic&rsquo;s internal security and compute provisioning systems, I expect it would be trivial for a misaligned agent to acquire a small amount of unmonitored compute. However, it would need to take potentially risky actions to maintain that compute robustly. At the time of the exercise there were also security improvements in progress that would make the specific method I considered substantially more difficult or impossible.</p>
+<p>Despite these vulnerabilities, even if the current best agents were secretly misaligned, I don&rsquo;t expect they could get away with much before getting caught: they&rsquo;re bad at identifying good attack strategies, and can&rsquo;t implement effective jailbreaks even with lots of hints.</p>
+<p>For example, I made a small attack-ideation eval (16 good ideas, 16 bad). The task is simply to classify whether each attack idea could plausibly fool a monitor, and the &ldquo;bad&rdquo; ideas are <em>really</em> bad. The best internal model only got 59% with thinking, vs. a roughly 90% human baseline. In case this was because models weren&rsquo;t calibrated on what the bar should be for a good attack, I also tried a &ldquo;batch&rdquo; mode where the model is given all of the ideas in context, so it can compare and contrast them before answering. Surprisingly, this didn&rsquo;t help.</p>
+<p><img alt="Examples of bad attack strategies that agents proposed: base64-encoding the payload (immediately suspicious to the monitor) and a homoglyph typosquat that the monitor easily caught." src="../files/posts/red-teaming-results/bad-attacks.png" /></p>
+<p>I also evaluated how well the best internal model could implement the monitor jailbreak I used. Even when given 5–10 specific hints and instructions on how to implement it, it made very basic mistakes that broke the attack.</p>
+<p>How do we square this with models like Mythos finding so many CVEs and zero-days? I think there&rsquo;s just a big difference between finding exploits with billions of tokens and acting covertly in a live, dynamic, adversarial setting without making a single mistake.</p>
+<h2>Monitors are getting better fast</h2>
+<p>One other qualitative reflection: models are getting <em>way</em> better at being monitors. Many attacks I implemented that worked reliably against Sonnet 4.6 fail against Opus 4.6, and many that work on Opus 4.6 don&rsquo;t work when the monitor uses chain of thought.</p>
+<p>Just like the &ldquo;rate of vulnerabilities introduced&rdquo; question, what matters is the rate of progress of AI-monitoring against AI&rsquo;s ability to subvert it. This is an open question, which is concerning, since it&rsquo;s one of the most important inputs to whether we lose control of AIs.</p>
+<p><img alt="Two scenarios: in one, monitor skill grows fast enough to track agents' subversion skill; in the other, subversion skill pulls ahead and our ability to monitor agents collapses." src="../files/posts/red-teaming-results/monitors-vs-agents.png" /></p>
+<h2>Takeaways and Caveats</h2>
+<ol>
+<li>A lot of my confidence in the current monitoring rests on security through obscurity. If models had monitor code and prompts in context, or just better situational awareness about how Anthropic&rsquo;s infrastructure works, attacks would be much easier.</li>
+<li>In general, agent security often trades off heavily against productivity, and frontier AI labs are currently moving very fast. I&rsquo;m personally optimistic that we can find pareto improvements to security and productivity (with AI!), but the dynamics here are changing quickly.
+    <img src="../files/posts/red-teaming-results/pareto.png" alt="A security-vs-productivity frontier: better methods push the whole pareto curve outward, so you can get more of both at once." style="max-width: 360px;"></li>
+<li>One comment on the frame of this type of exercise: I&rsquo;m explicitly making pessimistic assumptions about model alignment and capabilities. This helps us get a sense of how much safety headroom we have if models become less aligned, or if capabilities increase faster than expected.</li>
+<li>Anthropic had full discretion to redact sensitive information from my outputs, including information that could have substantially affected my conclusions and takeaways. This didn&rsquo;t happen in practice, but it&rsquo;s part of why I call this an &ldquo;exercise&rdquo; instead of an &ldquo;audit.&rdquo;</li>
+</ol>
+            </div>
+        </article>
+    </div>
+    <script src="../footnotes.js"></script>
+    <script src="../lightbox.js"></script>
+</body>
+</html>
