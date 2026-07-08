@@ -99,6 +99,8 @@ a:hover {
     width: auto;
     height: auto;
     object-fit: contain;
+    background: var(--bg);
+    padding: 24px;
     border-radius: 12px;
     cursor: zoom-out;
 }
