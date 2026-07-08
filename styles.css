@@ -173,44 +173,107 @@ it {
     font-size: 0.9em;
 }
 
+.writing-groups {
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+}
+
+.writing-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.group-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 18px;
+}
+
+.group-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    white-space: nowrap;
+}
+
+.group-rule {
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+}
+
+.group-count {
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+}
+
 .writing-list {
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 22px;
 }
 
-.writing-list li {
-    padding-bottom: 20px;
-    border-bottom: 1px solid var(--line);
+.writing-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 }
 
-.writing-list li:last-child {
-    border-bottom: none;
-    padding-bottom: 0;
+.writing-item[hidden] {
+    display: none;
 }
 
-.writing-row {
-    display: grid;
-    grid-template-columns: 70px 1fr;
-    gap: 16px;
-    align-items: baseline;
-}
-
-.writing-year {
+.writing-title {
+    font-size: 1.15rem;
     font-weight: 600;
-    color: var(--muted);
+    line-height: 1.35;
 }
 
-.writing-list a {
-    font-size: 1.05rem;
-    font-weight: 600;
+.writing-title[target="_blank"]::after {
+    content: "";
+    display: inline-block;
+    width: 0.6em;
+    height: 0.6em;
+    margin-left: 0.3em;
+    vertical-align: 0.12em;
+    opacity: 0.75;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231d4ed8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='7' y1='17' x2='17' y2='7'/%3E%3Cpolyline points='7 7 17 7 17 17'/%3E%3C/svg%3E") no-repeat center / contain;
 }
 
-.writing-list p {
-    margin-top: 6px;
+.writing-item .writing-meta {
+    margin: 0;
     color: var(--muted);
     font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.group-toggle {
+    align-self: flex-start;
+    margin-top: 18px;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    color: var(--accent);
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.group-toggle:hover {
+    text-decoration: underline;
+}
+
+.group-toggle .chev {
+    display: inline-block;
+    font-size: 0.8em;
+    margin-left: 2px;
 }
 
 /* Blog post pages */
@@ -333,11 +396,6 @@ it {
 
     .hero-image {
         max-width: 220px;
-    }
-
-    .writing-row {
-        grid-template-columns: 1fr;
-        gap: 6px;
     }
 
     .highlights-list li {

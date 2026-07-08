@@ -5,7 +5,7 @@ slug: red-teaming-results
 description: Results from a month embedded at Anthropic red-teaming the systems that monitor internally deployed agents for misaligned behavior.
 ---
 
-AI labs have started developing systems to monitor internally deployed AI agents for misaligned behavior. Earlier this year, I spent a month embedded at Anthropic stress-testing these systems, to see how easily current and future AIs could "go rogue" inside the company. We [announced the exercise in March](https://metr.org/blog/2026-03-25-red-teaming-anthropic-agent-monitoring/); today we're publishing the results and takeaways in more detail as part of [METR's Frontier Risk Report](https://metr.org/blog/2026-05-19-frontier-risk-report/#anthropic) (Appendix B). The exercise itself was conducted independently from the report.
+AI labs have started developing systems to monitor internally deployed AI agents for misaligned behavior. Earlier this year, I spent a month embedded at Anthropic stress-testing these systems, to see how easily current and future AIs could "go rogue" inside the company. We [announced the exercise in March](https://metr.org/blog/2026-03-25-red-teaming-anthropic-agent-monitoring/); today we're publishing the results and takeaways in more detail as part of [METR's Frontier Risk Report](https://metr.org/blog/2026-05-19-frontier-risk-report/#anthropic:~:text=Materials%20from%20our%203%20week%20embedded%20red%2Dteaming%20exercise) (Appendix B). The exercise itself was conducted independently from the report.
 
 The key results:
 
