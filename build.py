@@ -207,6 +207,51 @@ def open_links_in_new_tab(html):
     return re.sub(r"<a ", '<a target="_blank" rel="noreferrer" ', html)
 
 
+IMG_TAG_RE = re.compile(r'<img\b[^>]*\bsrc="([^"]+)"[^>]*>')
+
+
+def _image_has_transparency(path):
+    """True only if the image file has at least one non-opaque pixel.
+
+    RGBA/palette containers that happen to be fully opaque (min alpha 255)
+    return False, so screenshots saved as RGBA don't get a backing they
+    don't need."""
+    try:
+        with Image.open(path) as im:
+            if im.mode not in ("RGBA", "LA") and not (
+                im.mode == "P" and "transparency" in im.info
+            ):
+                return False
+            return im.convert("RGBA").getchannel("A").getextrema()[0] < 255
+    except (FileNotFoundError, OSError):
+        return False
+
+
+def mark_transparent_images(html):
+    """Tag <img>s whose local source has real transparency with
+    data-transparent="true".
+
+    lightbox.js reads this to give only those images a solid backing when
+    they're shown against the dark lightbox backdrop. Doing the alpha check
+    here (at build time) instead of via a runtime canvas means it also works
+    when the page is opened over file:// — where reading a local image back
+    off a canvas throws a security error.
+    """
+
+    def repl(m):
+        tag = m.group(0)
+        src = m.group(1)
+        if src.startswith(("http://", "https://", "//", "data:")):
+            return tag
+        # Post HTML lives in posts/, so "../files/x" resolves from repo root.
+        rel = src[3:] if src.startswith("../") else src.lstrip("/")
+        if "data-transparent" in tag or not _image_has_transparency(Path(rel)):
+            return tag
+        return tag.replace("<img", '<img data-transparent="true"', 1)
+
+    return IMG_TAG_RE.sub(repl, html)
+
+
 def build_post(md_path):
     """Convert a single markdown file to HTML."""
     text = md_path.read_text()
@@ -216,6 +261,7 @@ def build_post(md_path):
     body_html = md.convert(body_md)
     body_html = process_footnotes(body_html)
     body_html = open_links_in_new_tab(body_html)
+    body_html = mark_transparent_images(body_html)
 
     date = meta["date"]
     if isinstance(date, str):
