@@ -24,7 +24,17 @@ There is no test suite or linter. There is no `package.json`.
 - `posts/*.html` — Generated output. **Committed to the repo** because Netlify publishes the repo root directly. If you edit a post, run `python3 build.py` and commit both the `.md` and the regenerated `.html` (plus the OG image).
 - `posts/og/<slug>.png` — Auto-generated 1200×630 Open Graph cards, rendered with Pillow using `files/fonts/EBGaramond.ttf`. The title is auto-sized to fit; site name "idavidrein.com" sits at the bottom.
 
-`index.html` (the landing page with the "Writing & talks" list) is **hand-written for structure** — grouping, ordering, and external links are all manual. The one part `build.py` fills in is the per-post subtitle: for any list item whose title links to a local `posts/<slug>.html`, the `<p class="writing-meta">YEAR · …</p>` line is regenerated from that post's frontmatter (`date` year + `description`). So when adding a local post you still add the `<li>` + `<a class="writing-title" href="posts/<slug>.html">` by hand, but do **not** hand-write its subtitle — `build.py` writes it (and overwrites any manual one). Items linking to external URLs are left untouched, so their subtitles stay manual.
+`index.html` (the landing page with the "Writing & talks" list) is **hand-written for structure** — grouping, external links, and which items exist are all manual. `build.py` fills in two things per item:
+
+- **Subtitles (local posts only):** for any list item whose title links to a local `posts/<slug>.html`, the `<p class="writing-meta">YEAR · …</p>` line is regenerated from that post's frontmatter (`date` year + `description`). So when adding a local post you still add the `<li>` + `<a class="writing-title" href="posts/<slug>.html">` by hand, but do **not** hand-write its subtitle — `build.py` writes it (and overwrites any manual one). External items keep their hand-written subtitle.
+- **Sort metadata (every item):** `build.py` writes `data-date` plus two CSS custom properties — `--o-cur` (curated rank) and `--o-rec` (recency rank) — onto each `<li class="writing-item">`.
+
+### The sort toggle (`Recent` / `Curated`)
+
+Each subsection can be viewed two ways via one global toggle under the "Writing & talks" heading; default is **Curated**. Ordering is done purely in CSS (`.writing-item { order: var(--o-cur) }`, and `html.sort-recent .writing-item { order: var(--o-rec) }`), so the DOM order of the `<li>`s **does not matter for display** — it's just a fallback. A tiny `<head>` script applies the saved choice (`localStorage.writingSort`) before first paint to avoid a flash; the end-of-body script wires the buttons and, when a group is collapsed, keeps the "top N visible" logic honest by hiding items whose rank in the *current* sort is `>= VISIBLE`.
+
+- **`--o-rec` (Recent, reverse-chronological)** is computed from dates: local posts use their frontmatter `date`; **external items must carry a `data-date="YYYY-MM-DD"` attribute** on their `<li>` (sort-only — the day can be approximate; if omitted, `build.py` falls back to the subtitle's year and warns).
+- **`--o-cur` (Curated, "how much I like it")** comes from `content/curated-order.txt`: a compact, grouped list of titles, top = shown first. Reorder the lines to change the ranking, then run `build.py`. The file is auto-synced on every build — new items are appended to their group, removed items are dropped — so you only ever move lines around and never have to keep it complete by hand.
 
 ### `build.py` — non-obvious transforms
 
@@ -36,7 +46,7 @@ The build pipeline does more than markdown→HTML. When editing it, know that ea
 4. `open_links_in_new_tab` — blanket regex that adds `target="_blank" rel="noreferrer"` to every `<a `. This means **all** anchors (including footnote popup links) open in a new tab. If you ever add internal anchors that should stay in-tab, this rule will need refining.
 5. `generate_og_image` — writes `posts/og/<slug>.png`.
 
-After every post is built, `update_index` rewrites `index.html`'s per-post subtitles (see above). It matches `<a class="writing-title" href="posts/<slug>.html">` via `WRITING_ITEM_RE` and replaces the adjacent `writing-meta`; the pass is idempotent and only touches items whose slug corresponds to a just-built post.
+After every post is built, `update_index` rewrites the "Writing & talks" section. It parses each `.writing-group` (label + its `.writing-item`s) with narrow regexes — safe because the section is flat, no nested `<ul>`/`<li>` — identifying each item by its **plain-text title** (unescaped anchor text; this is the stable key that also links items to `curated-order.txt`). It then: (1) syncs `content/curated-order.txt`; (2) computes each item's curated rank (from that file) and recency rank (from dates); (3) rewrites every `<li class="writing-item">` opening tag with `data-date` + the `--o-cur`/`--o-rec` custom properties, and regenerates the subtitle for local posts. The whole pass is idempotent — running `build.py` twice is a no-op.
 
 The HTML template is a Python f-string constant (`TEMPLATE`) at the top of `build.py`. Each post links to `../styles.css`, `../footnotes.js`, and `../files/favicon/...` (relative paths), so anything in `posts/` must stay one directory deep.
 
@@ -58,5 +68,8 @@ Single `styles.css` for both the landing page and posts. CSS custom properties a
 
 1. Create `content/posts/<slug>.md` with frontmatter (`title`, `date: YYYY-MM-DD`, `slug`, `description`).
 2. Run `python3 build.py`.
-3. Add a `<li class="writing-item">` with an `<a class="writing-title" href="posts/<slug>.html">Title</a>` to the right group in the "Writing & talks" section of `index.html` (order by date, newest first). Don't hand-write the `writing-meta` subtitle — run `python3 build.py` again and it fills it in from the frontmatter `description`.
-4. Commit the `.md`, the generated `.html`, the generated `posts/og/<slug>.png`, and `index.html`.
+3. Add a `<li class="writing-item">` with an `<a class="writing-title" href="posts/<slug>.html">Title</a>` to the right group in the "Writing & talks" section of `index.html`. DOM order doesn't affect display (sorting is CSS-driven), so drop it anywhere in the group. Don't hand-write the `writing-meta` subtitle or the `data-date`/`style` attributes — `build.py` fills those in.
+4. Run `python3 build.py` again. It appends the new title to its group in `content/curated-order.txt` (last = lowest curated rank) and writes the sort metadata. Optionally reorder that file to place the post where you want in the **Curated** view, then run `build.py` once more.
+5. Commit the `.md`, the generated `.html`, the generated `posts/og/<slug>.png`, `index.html`, and `content/curated-order.txt`.
+
+**Adding an external item** (a talk, or a post hosted elsewhere): add the `<li class="writing-item">` by hand with the full anchor **and** a `data-date="YYYY-MM-DD"` (used only for the Recent sort — approximate is fine) and its `<p class="writing-meta">YEAR · …</p>` subtitle. Then run `build.py` (which sizes/normalizes the sort metadata and syncs `curated-order.txt`).

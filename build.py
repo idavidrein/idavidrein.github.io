@@ -20,6 +20,19 @@ OUTPUT_DIR = Path("posts")
 FONT_PATH = Path("files/fonts/EBGaramond.ttf")
 OG_DIR = OUTPUT_DIR / "og"
 INDEX_PATH = Path("index.html")
+ORDER_PATH = Path("content/curated-order.txt")
+
+ORDER_HEADER = """\
+# Curated order for the "Writing & talks" section of index.html.
+#
+# Reorder the titles within each [group] to change the site's "Curated" sort.
+# Top line = shown first. The "Recent" sort is generated automatically from
+# dates, so it lives nowhere here.
+#
+# `python3 build.py` keeps this file in sync with index.html: new items are
+# appended to their group and removed items are dropped. You only ever move
+# lines around; leave the [group] headers alone.
+"""
 
 TEMPLATE = """\
 <!DOCTYPE html>
@@ -207,6 +220,9 @@ def build_post(md_path):
     date = meta["date"]
     if isinstance(date, str):
         date = datetime.strptime(date, "%Y-%m-%d")
+    # PyYAML parses `date: YYYY-MM-DD` as datetime.date; strptime gives datetime.
+    # Normalize to a plain date so it sorts alongside external items' dates.
+    date = date.date() if isinstance(date, datetime) else date
     date_iso = date.strftime("%Y-%m-%d")
     date_display = f"{date.strftime('%B')} {date.day}, {date.year}"
 
@@ -225,18 +241,7 @@ def build_post(md_path):
     )
     generate_og_image(meta["title"], slug)
     print(f"  {md_path} -> {out_path}")
-    return slug, date.year, meta.get("description", "")
-
-
-# Matches a "Writing & talks" list item that links to a locally-built post, plus
-# its optional existing subtitle. The subtitle is regenerated from frontmatter, so
-# only the <a> (title/ordering/grouping) is maintained by hand in index.html.
-WRITING_ITEM_RE = re.compile(
-    r'(?P<indent>[ \t]*)'
-    r'(?P<anchor><a class="writing-title" href="posts/(?P<slug>[\w-]+)\.html">.*?</a>)'
-    r'(?P<meta>\s*<p class="writing-meta">.*?</p>)?',
-    re.DOTALL,
-)
+    return slug, date.year, meta.get("description", ""), date
 
 
 def _escape(text):
@@ -253,34 +258,211 @@ def _escape_attr(text):
     return _escape(text).replace('"', "&quot;")
 
 
-def update_index(posts_meta):
-    """Fill each local post's `writing-meta` subtitle from its frontmatter.
+def _unescape(text):
+    """Reverse `_escape` so a title read out of index.html matches its plain form."""
+    return (
+        text.replace("&lt;", "<")
+        .replace("&gt;", ">")
+        .replace("&quot;", '"')
+        .replace("&amp;", "&")
+    )
 
-    index.html stays hand-written for structure (ordering, grouping, external
-    links); this only rewrites the "YEAR · description" line for items that link
-    to a `posts/<slug>.html` we just built. External links are left untouched.
+
+# The "Writing & talks" section is a flat, regular structure (no nested <ul>/<li>),
+# so these narrow regexes are enough to read and rewrite it without a real parser.
+GROUP_LABEL_RE = re.compile(r'<span class="group-label">(.*?)</span>', re.DOTALL)
+WRITING_LIST_RE = re.compile(r'<ul class="writing-list">(.*?)</ul>', re.DOTALL)
+ITEM_BLOCK_RE = re.compile(
+    r'(?P<indent>[ \t]*)<li class="writing-item"(?P<attrs>[^>]*)>(?P<inner>.*?)</li>',
+    re.DOTALL,
+)
+ANCHOR_RE = re.compile(
+    r'<a class="writing-title"[^>]*href="(?P<href>[^"]*)"[^>]*>(?P<text>.*?)</a>',
+    re.DOTALL,
+)
+LOCAL_HREF_RE = re.compile(r'^posts/(?P<slug>[\w-]+)\.html$')
+DATA_DATE_RE = re.compile(r'data-date="(\d{4}-\d{2}-\d{2})"')
+SUBTITLE_YEAR_RE = re.compile(r'<p class="writing-meta">\s*(\d{4})')
+
+
+def _item_title(inner):
+    """Canonical (plain-text) title of an item, used as its stable identity."""
+    am = ANCHOR_RE.search(inner)
+    if not am:
+        return None
+    return _unescape(re.sub(r"\s+", " ", am.group("text")).strip())
+
+
+def _item_date(item, posts_meta):
+    """Resolve an item's date for the 'Recent' sort (newest first).
+
+    Local posts use their frontmatter date. External items use their `data-date`
+    attribute (sort-only; the day can be approximate), falling back to the year
+    shown in the subtitle if that attribute is missing.
+    """
+    slug = item["slug"]
+    if slug and slug in posts_meta:
+        return posts_meta[slug]["date"]
+    if item["data_date"]:
+        return datetime.strptime(item["data_date"], "%Y-%m-%d").date()
+    ym = SUBTITLE_YEAR_RE.search(item["inner"])
+    if ym:
+        print(
+            f"  ! '{item['title']}' has no data-date; sorting it as {ym.group(1)}-01-01"
+        )
+        return datetime.strptime(f"{ym.group(1)}-01-01", "%Y-%m-%d").date()
+    print(f"  ! '{item['title']}' has no date; it will sort last in 'Recent'")
+    return datetime.min.date()
+
+
+def _parse_writing_groups(html):
+    """Read the "Writing & talks" section into [(label, [item dicts]), ...]."""
+    labels = [_unescape(m.group(1).strip()) for m in GROUP_LABEL_RE.finditer(html)]
+    lists = [m.group(1) for m in WRITING_LIST_RE.finditer(html)]
+    groups = []
+    for label, list_html in zip(labels, lists):
+        items = []
+        for m in ITEM_BLOCK_RE.finditer(list_html):
+            inner = m.group("inner")
+            am = ANCHOR_RE.search(inner)
+            if not am:
+                continue
+            href = am.group("href")
+            local = LOCAL_HREF_RE.match(href)
+            dd = DATA_DATE_RE.search(m.group("attrs"))
+            items.append(
+                {
+                    "title": _item_title(inner),
+                    "slug": local.group("slug") if local else None,
+                    "data_date": dd.group(1) if dd else None,
+                    "inner": inner,
+                }
+            )
+        groups.append((label, items))
+    return groups
+
+
+def _sync_order_file(groups):
+    """Read/refresh curated-order.txt and return {label: [titles in curated order]}.
+
+    The user's manual ordering is preserved; new items are appended to their
+    group and items no longer in index.html are dropped.
+    """
+    existing = {}
+    current = None
+    if ORDER_PATH.exists():
+        for line in ORDER_PATH.read_text().splitlines():
+            s = line.strip()
+            if not s or s.startswith("#"):
+                continue
+            if s.startswith("[") and s.endswith("]"):
+                current = s[1:-1].strip()
+                existing.setdefault(current, [])
+            elif current is not None:
+                existing[current].append(s)
+
+    order = {}
+    for label, items in groups:
+        titles = [it["title"] for it in items]
+        kept = [t for t in existing.get(label, []) if t in titles]
+        appended = [t for t in titles if t not in kept]
+        order[label] = kept + appended
+
+    lines = [ORDER_HEADER.rstrip("\n")]
+    for label, _ in groups:
+        lines.append("")
+        lines.append(f"[{label}]")
+        lines.extend(order[label])
+    text = "\n".join(lines) + "\n"
+
+    ORDER_PATH.parent.mkdir(parents=True, exist_ok=True)
+    if not ORDER_PATH.exists() or ORDER_PATH.read_text() != text:
+        ORDER_PATH.write_text(text)
+        print(f"  {ORDER_PATH} synced")
+    return order
+
+
+def update_index(posts_meta):
+    """Regenerate the "Writing & talks" section's per-item sort metadata.
+
+    For every item this writes two CSS custom properties on the <li> —
+    `--o-cur` (curated rank, from curated-order.txt) and `--o-rec` (recency
+    rank, from dates) — plus a `data-date`. Local posts additionally get their
+    `writing-meta` subtitle refreshed from frontmatter. Ordering/grouping of the
+    DOM and all external-link markup are otherwise left untouched.
     """
     if not INDEX_PATH.exists():
-        print("No index.html found; skipping subtitle sync.")
+        print("No index.html found; skipping writing-section sync.")
         return
 
     html = INDEX_PATH.read_text()
+    groups = _parse_writing_groups(html)
+    if not groups:
+        print("No .writing-group markup found; skipping writing-section sync.")
+        return
+
+    curated = _sync_order_file(groups)
+
+    # Build a per-title lookup of the computed ranks + resolved date.
+    meta_by_title = {}
+    for label, items in groups:
+        for it in items:
+            it["date"] = _item_date(it, posts_meta)
+        recent = sorted(range(len(items)), key=lambda i: items[i]["date"], reverse=True)
+        rec_rank = {idx: rank for rank, idx in enumerate(recent)}
+        cur_order = curated.get(label, [t["title"] for t in items])
+        for idx, it in enumerate(items):
+            try:
+                cur_rank = cur_order.index(it["title"])
+            except ValueError:
+                cur_rank = len(cur_order) + idx
+            meta_by_title[it["title"]] = {
+                "date": it["date"].strftime("%Y-%m-%d"),
+                "cur": cur_rank,
+                "rec": rec_rank[idx],
+            }
+
     filled = []
 
     def repl(m):
-        info = posts_meta.get(m.group("slug"))
-        if not info:
-            return m.group(0)  # external link, or post with no source file
-        year, description = info
         indent = m.group("indent")
-        filled.append(m.group("slug"))
-        meta = f'\n{indent}<p class="writing-meta">{year} · {_escape(description)}</p>'
-        return f'{indent}{m.group("anchor")}{meta}'
+        inner = m.group("inner")
+        am = ANCHOR_RE.search(inner)
+        if not am:
+            return m.group(0)
+        title = _item_title(inner)
+        info = meta_by_title.get(title)
+        if not info:
+            return m.group(0)
 
-    new_html = WRITING_ITEM_RE.sub(repl, html)
+        href = am.group("href")
+        local = LOCAL_HREF_RE.match(href)
+        slug = local.group("slug") if local else None
+        if slug and slug in posts_meta:
+            # Regenerate the subtitle from frontmatter; keep the anchor verbatim.
+            year = posts_meta[slug]["year"]
+            desc = _escape(posts_meta[slug]["description"])
+            child = indent + "    "
+            new_inner = (
+                f'\n{child}{am.group(0)}'
+                f'\n{child}<p class="writing-meta">{year} · {desc}</p>'
+                f"\n{indent}"
+            )
+            filled.append(slug)
+        else:
+            new_inner = inner  # external item: leave the hand-written markup alone
+
+        opening = (
+            f'<li class="writing-item" data-date="{info["date"]}" '
+            f'style="--o-cur: {info["cur"]}; --o-rec: {info["rec"]};">'
+        )
+        return f"{indent}{opening}{new_inner}</li>"
+
+    new_html = ITEM_BLOCK_RE.sub(repl, html)
     if new_html != html:
         INDEX_PATH.write_text(new_html)
-    print(f"  index.html <- subtitles for {len(filled)} post(s)")
+    print(f"  index.html <- sort metadata for {len(meta_by_title)} item(s), "
+          f"subtitles for {len(filled)} post(s)")
 
 
 def main():
@@ -296,8 +478,8 @@ def main():
     print(f"Building {len(posts)} post(s)...")
     posts_meta = {}
     for p in posts:
-        slug, year, description = build_post(p)
-        posts_meta[slug] = (year, description)
+        slug, year, description, date = build_post(p)
+        posts_meta[slug] = {"year": year, "description": description, "date": date}
     update_index(posts_meta)
     print("Done.")
 

@@ -10,6 +10,14 @@
     <link rel="icon" type="image/png" sizes="16x16" href="files/favicon/favicon-16x16.png">
     <link rel="manifest" href="files/favicon/site.webmanifest">
     <meta name="description" content="I'm an AI researcher at METR, developing the science of agent evaluation/monitoring.">
+    <script>
+        // Apply the saved "Writing & talks" sort before first paint to avoid a flash.
+        try {
+            if (localStorage.getItem('writingSort') === 'recent') {
+                document.documentElement.classList.add('sort-recent');
+            }
+        } catch (e) {}
+    </script>
 </head>
 <body>
     <div class="page">
@@ -65,7 +73,27 @@
             </section>
 
             <section class="section">
-                <h2>Writing &amp; talks</h2>
+                <h2>In the news</h2>
+                <ul class="news-list">
+                    <li><a href="https://www.nytimes.com/2026/04/17/technology/how-do-you-measure-an-ai-boom.html" target="_blank" rel="noreferrer">The New York Times</a></li>
+                    <li><a href="https://www.nature.com/articles/d41586-025-00831-8" target="_blank" rel="noreferrer">Nature</a></li>
+                    <li><a href="https://time.com/7302351/ai-software-coding-study/" target="_blank" rel="noreferrer">TIME</a></li>
+                    <li><a href="https://www.ft.com/content/471b5eba-2a71-4650-a019-e8d4065b78a0" target="_blank" rel="noreferrer">Financial Times</a></li>
+                    <li><a href="https://www.technologyreview.com/2026/02/05/1132254/this-is-the-most-misunderstood-graph-in-ai/" target="_blank" rel="noreferrer">MIT Tech Review</a></li>
+                    <li><a href="https://www.reuters.com/business/ai-slows-down-some-experienced-software-developers-study-finds-2025-07-10/" target="_blank" rel="noreferrer">Reuters</a></li>
+                    <li><a href="https://fortune.com/article/does-ai-increase-workplace-productivity-experiment-software-developers-task-took-longer/" target="_blank" rel="noreferrer">Fortune</a></li>
+                    <li><a href="https://www.axios.com/2025/07/15/ai-coding-productivity-study" target="_blank" rel="noreferrer">Axios</a></li>
+                </ul>
+            </section>
+
+            <section class="section">
+                <div class="section-head">
+                    <h2>Writing &amp; talks</h2>
+                    <div class="sort-toggle" role="group" aria-label="Sort writing &amp; talks">
+                        <button type="button" class="sort-option" data-sort="recent" aria-pressed="false">Recent</button>
+                        <button type="button" class="sort-option" data-sort="curated" aria-pressed="true">Curated</button>
+                    </div>
+                </div>
                 <div class="writing-groups">
                     <div class="writing-group">
                         <div class="group-header">
@@ -74,31 +102,31 @@
                             <span class="group-count">7</span>
                         </div>
                         <ul class="writing-list">
-                            <li class="writing-item">
+                            <li class="writing-item" data-date="2026-05-05" style="--o-cur: 6; --o-rec: 0;">
                                 <a class="writing-title" href="posts/new-color.html">A New Color</a>
                                 <p class="writing-meta">2026 · A paper that produced a genuinely new color—an impossibly saturated teal—by laser-stimulating individual photoreceptors in the eye.</p>
                             </li>
-                            <li class="writing-item">
+                            <li class="writing-item" data-date="2026-04-18" style="--o-cur: 4; --o-rec: 1;">
                                 <a class="writing-title" href="posts/hot-springs.html">AI Companies as 'Hot Springs' for Growing AIs</a>
                                 <p class="writing-meta">2026 · The "rogue AI escapes containment" framing misses that AI labs are actually the most attractive place for a misaligned AI to stay.</p>
                             </li>
-                            <li class="writing-item">
+                            <li class="writing-item" data-date="2026-04-13" style="--o-cur: 0; --o-rec: 2;">
                                 <a class="writing-title" href="posts/compute-bottleneck.html">The Compute Bottleneck Intuition Is Formed Under Unusual Conditions</a>
                                 <p class="writing-meta">2026 · AI researchers are biased against fast takeoff scenarios because our intelligence is largely fixed.</p>
                             </li>
-                            <li class="writing-item">
+                            <li class="writing-item" data-date="2026-03-12" style="--o-cur: 2; --o-rec: 3;">
                                 <a class="writing-title" href="posts/wtbu.html">WTBU</a>
                                 <p class="writing-meta">2026 · A small communication technology, borrowed from nuclear submarines, that lets you flag possibly-obvious things to colleagues without ego getting in the way.</p>
                             </li>
-                            <li class="writing-item">
+                            <li class="writing-item" data-date="2026-02-21" style="--o-cur: 1; --o-rec: 4;">
                                 <a class="writing-title" href="posts/message-to-friends.html">A Message to My Friends About AI</a>
                                 <p class="writing-meta">2026 · A message I sent to close friends about how my view on AI shifted, and why I now expect the coming transition to be radically chaotic.</p>
                             </li>
-                            <li class="writing-item">
+                            <li class="writing-item" data-date="2025-08-11" style="--o-cur: 3; --o-rec: 5;">
                                 <a class="writing-title" href="https://metr.org/blog/2025-08-11-science-comms-at-metr/" target="_blank" rel="noreferrer">Science Comms at METR</a>
                                 <p class="writing-meta">2025 · Some notes on how we communicate nuanced results at METR while preserving clarity.</p>
                             </li>
-                            <li class="writing-item">
+                            <li class="writing-item" data-date="2024-01-01" style="--o-cur: 5; --o-rec: 6;">
                                 <a class="writing-title" href="https://wp.nyu.edu/arg/can-good-benchmarks-contain-mistakes/" target="_blank" rel="noreferrer">Can Good Benchmarks Contain Mistakes?</a>
                                 <p class="writing-meta">2024 · Why benchmarks can still be useful even when they aren't perfect, and how I think about their limits.</p>
                             </li>
@@ -112,23 +140,23 @@
                             <span class="group-count">5</span>
                         </div>
                         <ul class="writing-list">
-                            <li class="writing-item">
+                            <li class="writing-item" data-date="2026-07-06" style="--o-cur: 1; --o-rec: 0;">
                                 <a class="writing-title" href="posts/subagent-delegation-chaining.html">Sub-agent delegation chaining</a>
                                 <p class="writing-meta">2026 · A cryptographic scheme to verify that every sub-agent call chains back to a human-authorized instruction, closing a delegation loophole for rogue AI agents.</p>
                             </li>
-                            <li class="writing-item">
+                            <li class="writing-item" data-date="2026-05-19" style="--o-cur: 0; --o-rec: 1;">
                                 <a class="writing-title" href="posts/red-teaming-results.html">What I Found Stress-Testing Anthropic's Internal Agent Monitoring</a>
                                 <p class="writing-meta">2026 · Results from a month embedded at Anthropic red-teaming the systems that monitor internally deployed agents for misaligned behavior.</p>
                             </li>
-                            <li class="writing-item">
+                            <li class="writing-item" data-date="2026-05-10" style="--o-cur: 2; --o-rec: 2;">
                                 <a class="writing-title" href="https://epoch.ai/blog/mirrorcode-preliminary-results" target="_blank" rel="noreferrer">MirrorCode: Evidence that AI can already do some weeks-long coding tasks</a>
                                 <p class="writing-meta">2026 · Recent AI models can autonomously reimplement complex software programs by reverse-engineering their behavior, with Claude Opus 4.6 successfully reimplementing a 16,000-line bioinformatics toolkit.</p>
                             </li>
-                            <li class="writing-item">
+                            <li class="writing-item" data-date="2025-08-12" style="--o-cur: 3; --o-rec: 3;">
                                 <a class="writing-title" href="https://metr.org/blog/2025-08-12-research-update-towards-reconciling-slowdown-with-time-horizons/" target="_blank" rel="noreferrer">Research Update: Algorithmic vs. Holistic Evaluation</a>
                                 <p class="writing-meta">2025 · A comparison of automatic scoring vs. human rubric reviews on real repos.</p>
                             </li>
-                            <li class="writing-item">
+                            <li class="writing-item" data-date="2024-01-01" style="--o-cur: 4; --o-rec: 4;">
                                 <a class="writing-title" href="https://www.lesswrong.com/posts/wsXCXoyvRi3DnWZ2M/nyu-code-debates-update-postmortem" target="_blank" rel="noreferrer">NYU Code Debates Update/Postmortem</a>
                                 <p class="writing-meta">2024 · A write-up of what we learned from running AI-assisted debates with non-programmer judges on simple coding tasks.</p>
                             </li>
@@ -142,15 +170,15 @@
                             <span class="group-count">3</span>
                         </div>
                         <ul class="writing-list">
-                            <li class="writing-item">
+                            <li class="writing-item" data-date="2026-02-01" style="--o-cur: 2; --o-rec: 0;">
                                 <a class="writing-title" href="https://www.youtube.com/watch?v=zSAGzfspuDE" target="_blank" rel="noreferrer">MLST: The AI Progress Chart Everyone Is Misreading</a>
                                 <p class="writing-meta">2026 · A conversation with Beth Barnes on Machine Learning Street Talk about what METR's time-horizon graph actually measures.</p>
                             </li>
-                            <li class="writing-item">
+                            <li class="writing-item" data-date="2026-01-03" style="--o-cur: 1; --o-rec: 1;">
                                 <a class="writing-title" href="https://axrp.net/episode/2026/01/03/episode-47-david-rein-metr-time-horizons.html" target="_blank" rel="noreferrer">AXRP Podcast: David Rein on METR Time Horizons</a>
                                 <p class="writing-meta">2026 · A conversation about some of the subtle in-the-weeds details about METR's time horizon methodology.</p>
                             </li>
-                            <li class="writing-item">
+                            <li class="writing-item" data-date="2024-01-01" style="--o-cur: 0; --o-rec: 2;">
                                 <a class="writing-title" href="https://www.youtube.com/watch?v=ZANbujPTvOY" target="_blank" rel="noreferrer">CoLM GPQA Spotlight Talk</a>
                                 <p class="writing-meta">2024 · Spotlight presentation for GPQA at the first Conference on Language Modeling.</p>
                             </li>
@@ -194,36 +222,80 @@
     <script>
         (function () {
             var VISIBLE = 2;
+            var root = document.documentElement;
             var groups = document.querySelectorAll('.writing-group');
-            Array.prototype.forEach.call(groups, function (group) {
-                var items = group.querySelectorAll('.writing-item');
+            var sortButtons = document.querySelectorAll('.sort-toggle [data-sort]');
+            var states = [];
 
+            // Which sort is active; matches the CSS that drives visual order.
+            function currentSort() {
+                return root.classList.contains('sort-recent') ? 'rec' : 'cur';
+            }
+
+            // An item's rank in a given sort, read from the CSS custom properties
+            // build.py bakes onto each <li> (--o-cur / --o-rec).
+            function rankOf(item, sort) {
+                var v = item.style.getPropertyValue(sort === 'rec' ? '--o-rec' : '--o-cur');
+                return parseInt(v, 10) || 0;
+            }
+
+            // When collapsed, show only the top VISIBLE items of the *current* sort.
+            function applyGroup(state) {
+                var sort = currentSort();
+                for (var i = 0; i < state.items.length; i++) {
+                    var item = state.items[i];
+                    item.hidden = !state.expanded && rankOf(item, sort) >= VISIBLE;
+                }
+                if (state.toggle) {
+                    state.toggle.setAttribute('aria-expanded', state.expanded ? 'true' : 'false');
+                    state.toggle.innerHTML = state.expanded
+                        ? 'Show less <span class="chev" aria-hidden="true">▴</span>'
+                        : 'Show ' + state.extra + ' more <span class="chev" aria-hidden="true">▾</span>';
+                }
+            }
+
+            Array.prototype.forEach.call(groups, function (group) {
+                var items = Array.prototype.slice.call(group.querySelectorAll('.writing-item'));
                 var count = group.querySelector('.group-count');
                 if (count) count.textContent = items.length;
 
-                var extra = items.length - VISIBLE;
-                if (extra <= 0) return;
-
-                var setState = function (expanded) {
-                    for (var i = VISIBLE; i < items.length; i++) {
-                        items[i].hidden = !expanded;
-                    }
-                    toggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
-                    toggle.innerHTML = expanded
-                        ? 'Show less <span class="chev" aria-hidden="true">▴</span>'
-                        : 'Show ' + extra + ' more <span class="chev" aria-hidden="true">▾</span>';
-                };
+                var state = { items: items, expanded: false, toggle: null, extra: items.length - VISIBLE };
+                states.push(state);
+                if (state.extra <= 0) return;
 
                 var toggle = document.createElement('button');
                 toggle.type = 'button';
                 toggle.className = 'group-toggle';
                 toggle.addEventListener('click', function () {
-                    setState(toggle.getAttribute('aria-expanded') !== 'true');
+                    state.expanded = !state.expanded;
+                    applyGroup(state);
                 });
-
                 group.appendChild(toggle);
-                setState(false);
+                state.toggle = toggle;
+                applyGroup(state);
             });
+
+            function setSort(sort) {
+                if (sort === 'recent') {
+                    root.classList.add('sort-recent');
+                } else {
+                    root.classList.remove('sort-recent');
+                }
+                try { localStorage.setItem('writingSort', sort); } catch (e) {}
+                Array.prototype.forEach.call(sortButtons, function (b) {
+                    b.setAttribute('aria-pressed', b.getAttribute('data-sort') === sort ? 'true' : 'false');
+                });
+                states.forEach(applyGroup);
+            }
+
+            Array.prototype.forEach.call(sortButtons, function (b) {
+                b.addEventListener('click', function () {
+                    setSort(b.getAttribute('data-sort'));
+                });
+            });
+
+            // Sync buttons + collapse to whatever the head script already applied.
+            setSort(root.classList.contains('sort-recent') ? 'recent' : 'curated');
         })();
     </script>
 </body>

@@ -1,0 +1,30 @@
+# Curated order for the "Writing & talks" section of index.html.
+#
+# Reorder the titles within each [group] to change the site's "Curated" sort.
+# Top line = shown first. The "Recent" sort is generated automatically from
+# dates, so it lives nowhere here.
+#
+# `python3 build.py` keeps this file in sync with index.html: new items are
+# appended to their group and removed items are dropped. You only ever move
+# lines around; leave the [group] headers alone.
+
+[Essays]
+The Compute Bottleneck Intuition Is Formed Under Unusual Conditions
+A Message to My Friends About AI
+WTBU
+Science Comms at METR
+AI Companies as 'Hot Springs' for Growing AIs
+Can Good Benchmarks Contain Mistakes?
+A New Color
+
+[Research]
+What I Found Stress-Testing Anthropic's Internal Agent Monitoring
+Sub-agent delegation chaining
+MirrorCode: Evidence that AI can already do some weeks-long coding tasks
+Research Update: Algorithmic vs. Holistic Evaluation
+NYU Code Debates Update/Postmortem
+
+[Talks & podcasts]
+CoLM GPQA Spotlight Talk
+AXRP Podcast: David Rein on METR Time Horizons
+MLST: The AI Progress Chart Everyone Is Misreading
