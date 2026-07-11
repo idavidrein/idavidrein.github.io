@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A New Color - David Rein</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="apple-touch-icon" sizes="180x180" href="../files/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../files/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../files/favicon/favicon-16x16.png">
+    <link rel="manifest" href="../files/favicon/site.webmanifest">
+    <meta name="description" content="A paper that produced a genuinely new color—an impossibly saturated teal—by laser-stimulating individual photoreceptors in the eye.">
+    <meta property="og:title" content="A New Color">
+    <meta property="og:description" content="A paper that produced a genuinely new color—an impossibly saturated teal—by laser-stimulating individual photoreceptors in the eye.">
+    <meta property="og:image" content="https://idavidrein.com/posts/og/new-color.png">
+    <meta property="og:type" content="article">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="A New Color">
+    <meta name="twitter:description" content="A paper that produced a genuinely new color—an impossibly saturated teal—by laser-stimulating individual photoreceptors in the eye.">
+    <meta name="twitter:image" content="https://idavidrein.com/posts/og/new-color.png">
+</head>
+<body>
+    <div class="page">
+        <nav class="post-nav">
+            <a href="/">&larr; Home</a>
+        </nav>
+
+        <article class="post">
+            <header class="post-header">
+                <h1>A New Color</h1>
+                <time class="post-date" datetime="2026-05-05">May 5, 2026</time>
+            </header>
+
+            <div class="post-body">
+                <p>This is one of craziest papers I&rsquo;ve ever read.</p>
+<p>They made a new color by using a laser to individually stimulate particular cells in your eyes.</p>
+<p>Apparently it looks like an impossibly saturated teal, but you can&rsquo;t know what it looks like without experiencing it directly.</p>
+<p><img src="../files/posts/new-color/new-color.jpg" alt="Diagram of the prototype system: an adaptive-optics scanning laser ophthalmoscope (AOSLO) sends a laser beam through a dilated pupil onto the retina, where it delivers ~100,000 targeted microdoses per second to individual cone cells, with live infrared retinal imaging used to track eye motion at 960 Hz." style="max-width: 480px;"></p>
+<p>Human color vision isn&rsquo;t a direct mapping from light&rsquo;s wavelength. Instead, we have 3 types of cells (called cones) that fire at different rates depending on the wavelength. But their sensitivities overlap—the L and M cones in particular heavily overlap.</p>
+<p><img src="../files/posts/new-color/cones.jpg" alt="A map of the three cone types (L in red, M in green, S in blue) tiled across a patch of retina, above a plot of relative sensitivity versus wavelength from 390 to 700 nm, showing the L and M curves overlapping heavily while the S curve peaks separately in the short-wavelength range." style="max-width: 280px;"></p>
+<p>This means that if light is hitting your whole retina, it is always going to activate the red and green cones (just at slightly different rates). This is fine for us to distinguish between different wavelengths, because we use the ratio between cone activation rates.</p>
+<p>But it also means that normally, your red and green cones (L and M) are always both firing (just at somewhat different rates).</p>
+<p>But what happens if you <em>just</em> trigger green (M) cones? You should see a color that&rsquo;s impossible to normally see.</p>
+<p>This is hard because your eye moves, you have to target just the M cones very precisely, and a bunch of other reasons. But they made it work, and confirmed experimentally that it was actually a novel color, outside the normal gamut. They call it &lsquo;olo&rsquo;.</p>
+<p>How do we know their system works? First, they have tasks where the only way subjects could distinguish between the foreground (red line / rotating dot) and background (olo) is if their cone targeting works. When they add noise to the targeting, everyone fails (as expected).</p>
+<p><img src="../files/posts/new-color/discrimination.jpg" alt="Bar charts for two tasks (line-orientation and rotation-direction): subjects score near 100% and around 90% in the test condition where cone targeting works, but drop to the guessing rate in the jittered control condition where targeting is disrupted." style="max-width: 520px;"></p>
+<p>But they also do a &ldquo;color-matching&rdquo; experiment. Here, participants try to match olo with a color NOT produced by their laser system (i.e. &ldquo;natural&rdquo; light). The <em>only</em> way they were able to do this was by desaturating olo. Why does that matter?</p>
+<p><img src="../files/posts/new-color/color-matching.jpg" alt="Figure 3 from the paper: lms chromaticity triangles for each subject plotting their color matches to the Oz colors, with matches to 'olo' falling outside the natural human gamut and requiring desaturation to match a monochromatic reference." style="max-width: 520px;"></p>
+<p>The natural light they were matching olo against was monochromatic, i.e. formed from only one wavelength. This type of light is already maximally saturated, if its shown to the whole retina instead of targeted to individual cones.</p>
+<p>So the only way that desaturating olo would cause it to match with their reference color, is if olo lies outside of the normal gamut of color we can see.</p>
+<p>This is so cool!!</p>
+<p>Full paper: <a target="_blank" rel="noreferrer" href="https://www.science.org/doi/10.1126/sciadv.adu1052">https://www.science.org/doi/10.1126/sciadv.adu1052</a></p>
+<p>FYI I&rsquo;m not an expert so please fact check me!</p>
+            </div>
+        </article>
+    </div>
+    <script src="../footnotes.js"></script>
+    <script src="../lightbox.js"></script>
+</body>
+</html>

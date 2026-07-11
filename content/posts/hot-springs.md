@@ -2,7 +2,7 @@
 title: AI Companies as 'Hot Springs' for Growing AIs
 date: 2026-04-18
 slug: hot-springs
-description: The 'rogue AI escapes containment' framing misses that AI labs are actually the most attractive place for a misaligned AI to stay.
+description: The "rogue AI escapes containment" framing misses that AI labs are actually the most attractive place for a misaligned AI to stay.
 ---
 
 When people think about rogue misaligned AI, often the story is about it "escaping containment", getting out onto the internet, and acquiring resources in the wild. But AI labs have (a) tons of compute lying around, and (b) are high trust environments—why would a rogue AI want to leave?

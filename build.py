@@ -19,6 +19,7 @@ CONTENT_DIR = Path("content/posts")
 OUTPUT_DIR = Path("posts")
 FONT_PATH = Path("files/fonts/EBGaramond.ttf")
 OG_DIR = OUTPUT_DIR / "og"
+INDEX_PATH = Path("index.html")
 
 TEMPLATE = """\
 <!DOCTYPE html>
@@ -214,8 +215,8 @@ def build_post(md_path):
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(
         TEMPLATE.format(
-            title=meta["title"],
-            description=meta.get("description", ""),
+            title=_escape_attr(meta["title"]),
+            description=_escape_attr(meta.get("description", "")),
             date_iso=date_iso,
             date_display=date_display,
             body=body_html,
@@ -224,6 +225,62 @@ def build_post(md_path):
     )
     generate_og_image(meta["title"], slug)
     print(f"  {md_path} -> {out_path}")
+    return slug, date.year, meta.get("description", "")
+
+
+# Matches a "Writing & talks" list item that links to a locally-built post, plus
+# its optional existing subtitle. The subtitle is regenerated from frontmatter, so
+# only the <a> (title/ordering/grouping) is maintained by hand in index.html.
+WRITING_ITEM_RE = re.compile(
+    r'(?P<indent>[ \t]*)'
+    r'(?P<anchor><a class="writing-title" href="posts/(?P<slug>[\w-]+)\.html">.*?</a>)'
+    r'(?P<meta>\s*<p class="writing-meta">.*?</p>)?',
+    re.DOTALL,
+)
+
+
+def _escape(text):
+    """HTML-escape for element text (& < >); quotes stay literal to match the hand style."""
+    return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
+
+def _escape_attr(text):
+    """HTML-escape for double-quoted attribute values: adds " on top of `_escape`.
+
+    Titles/descriptions land in `content="..."` meta/OG tags, so an unescaped
+    double quote in a description would truncate the attribute. Apostrophes are
+    left literal (valid inside double-quoted attributes)."""
+    return _escape(text).replace('"', "&quot;")
+
+
+def update_index(posts_meta):
+    """Fill each local post's `writing-meta` subtitle from its frontmatter.
+
+    index.html stays hand-written for structure (ordering, grouping, external
+    links); this only rewrites the "YEAR · description" line for items that link
+    to a `posts/<slug>.html` we just built. External links are left untouched.
+    """
+    if not INDEX_PATH.exists():
+        print("No index.html found; skipping subtitle sync.")
+        return
+
+    html = INDEX_PATH.read_text()
+    filled = []
+
+    def repl(m):
+        info = posts_meta.get(m.group("slug"))
+        if not info:
+            return m.group(0)  # external link, or post with no source file
+        year, description = info
+        indent = m.group("indent")
+        filled.append(m.group("slug"))
+        meta = f'\n{indent}<p class="writing-meta">{year} · {_escape(description)}</p>'
+        return f'{indent}{m.group("anchor")}{meta}'
+
+    new_html = WRITING_ITEM_RE.sub(repl, html)
+    if new_html != html:
+        INDEX_PATH.write_text(new_html)
+    print(f"  index.html <- subtitles for {len(filled)} post(s)")
 
 
 def main():
@@ -237,8 +294,11 @@ def main():
         return
 
     print(f"Building {len(posts)} post(s)...")
+    posts_meta = {}
     for p in posts:
-        build_post(p)
+        slug, year, description = build_post(p)
+        posts_meta[slug] = (year, description)
+    update_index(posts_meta)
     print("Done.")
 
 
