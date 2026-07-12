@@ -56,7 +56,7 @@ TEMPLATE = """\
     <meta name="twitter:description" content="{description}">
     <meta name="twitter:image" content="https://idavidrein.com/posts/og/{slug}.png">
 </head>
-<body>
+<body class="post-page">
     <div class="page">
         <nav class="post-nav">
             <a href="/">&larr; Home</a>
@@ -132,7 +132,7 @@ def process_footnotes(html):
             f'<span class="footnote-ref" tabindex="0" role="button" '
             f'aria-label="Footnote {num}">'
             f"<sup>{num}</sup>"
-            f'<span class="footnote-popup" role="tooltip">{content}</span>'
+            f'<span class="footnote-popup" role="tooltip" data-fn="{num}">{content}</span>'
             f"</span>"
         )
 
