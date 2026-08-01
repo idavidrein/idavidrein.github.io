@@ -556,26 +556,39 @@ html.sort-recent .writing-item {
 
 @media (max-width: 720px) {
     .hero {
-        grid-template-columns: auto 1fr;
-        align-items: flex-start;
-        gap: 18px;
-        padding-bottom: 28px;
+        display: grid;
+        grid-template-columns: 64px 1fr;
+        grid-template-areas:
+            "photo name"
+            "links links";
+        column-gap: 16px;
+        row-gap: 14px;
+        align-items: center;
         text-align: left;
+        padding-bottom: 28px;
     }
 
     .hero-image {
-        max-width: 92px;
+        grid-area: photo;
+        max-width: 64px;
     }
 
     .profile-photo-button,
     .profile-photo {
-        max-width: 92px;
-        border-radius: 10px;
+        max-width: 64px;
+        border-radius: 50%;
     }
 
     .hero-text {
-        gap: 8px;
-        padding-top: 2px;
+        display: contents;
+    }
+
+    h1 {
+        grid-area: name;
+    }
+
+    .links {
+        grid-area: links;
     }
 
     main {
@@ -599,18 +612,19 @@ html.sort-recent .writing-item {
     }
 
     .hero {
-        gap: 14px;
-        padding-bottom: 20px;
+        grid-template-columns: 56px 1fr;
+        column-gap: 14px;
+        row-gap: 12px;
+        padding-bottom: 22px;
     }
 
     .hero-image {
-        max-width: 76px;
+        max-width: 56px;
     }
 
     .profile-photo-button,
     .profile-photo {
-        max-width: 76px;
-        border-radius: 8px;
+        max-width: 56px;
     }
 
     .links {
