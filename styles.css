@@ -556,12 +556,20 @@ html.sort-recent .writing-item {
 
 @media (max-width: 720px) {
     .hero {
-        grid-template-columns: 1fr;
+        grid-template-columns: auto 1fr;
+        align-items: center;
+        gap: 20px;
         text-align: left;
     }
 
     .hero-image {
-        max-width: 220px;
+        max-width: 96px;
+    }
+
+    .profile-photo-button,
+    .profile-photo {
+        max-width: 96px;
+        border-radius: 10px;
     }
 
     .highlights-list li {
@@ -572,11 +580,25 @@ html.sort-recent .writing-item {
 
 @media (max-width: 520px) {
     .page {
-        padding: 48px 16px 64px;
+        padding: 32px 16px 64px;
     }
 
     .hero {
-        gap: 24px;
-        padding-bottom: 32px;
+        gap: 16px;
+        padding-bottom: 24px;
+    }
+
+    .hero-image {
+        max-width: 80px;
+    }
+
+    .profile-photo-button,
+    .profile-photo {
+        max-width: 80px;
+        border-radius: 8px;
+    }
+
+    .links {
+        gap: 10px 14px;
     }
 }
